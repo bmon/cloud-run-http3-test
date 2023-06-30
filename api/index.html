@@ -1,0 +1,47 @@
+<!doctype html>
+<head>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>h3 connection test</h2>
+  <div>Test starts automatically. Results below:</div>
+  <table id="results" border="1">
+    <tr>
+      <th>seq</th>
+      <th>sent ts</th>
+      <th>rtt</th>
+      <th>server time</th>
+      <th>client ip</th>
+    </tr>
+  </table>
+  <script type="text/javascript">
+    var seq = 0;
+    async function doClientPing() {
+      var table = document.getElementById("results");
+      var row = table.insertRow(1);
+      row.insertCell().innerHTML = seq;
+      seq++;
+      var startTime = Date.now();
+      row.insertCell().innerHTML = startTime;
+      
+      const resp = await fetch("/client-ping", {method:"POST"});
+      const result = await resp.json();
+
+      row.insertCell().innerHTML = Date.now() - startTime;
+      row.insertCell().innerHTML = result.server_time;
+      row.insertCell().innerHTML = result.client_ip;
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+      setInterval(doClientPing, 2000);
+    });
+  </script>
+</body>
